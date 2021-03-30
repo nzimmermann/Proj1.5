@@ -16,7 +16,10 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.nick_pat.model.Reimbursement;
-import com.project1.util.ConnectionUtil;
+//import com.project1.util.ConnectionUtil;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 
 /*
  * Purpose of this Dao is to send/retrieve info about a reimbursement
@@ -33,7 +36,12 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 	@Override
 	public List<Reimbursement> getList() {
 		List<Reimbursement> l = new ArrayList<Reimbursement>();
-		
+
+		SessionFactory factory = new Configuration().configure().buildSessionFactory();
+
+		Session session = factory.openSession().getSession();
+
+
 		try (Connection c = ConnectionUtil.getInstance().getConnection()) {
 			String qSql = "SELECT * FROM ers_reimbursement";
 			Statement s = c.createStatement();
