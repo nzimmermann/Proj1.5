@@ -3,8 +3,11 @@ package com.nick_pat.model;
 import java.sql.Timestamp;
 import javax.persistence.*;
 
-
-@NamedQueries({})
+// TODO: Gotta add the update list named query to this
+@NamedQueries({@NamedQuery(name="getAllReimbursements", query = "from Reimbursement"),
+				@NamedQuery(name="getReimbursementById", query = "from Reimbursement where id = :id"),
+				@NamedQuery(name="getReimbursementByUserId", query = "from Reimbursement where author = :author")
+				})
 @Entity
 @Table
 public class Reimbursement {

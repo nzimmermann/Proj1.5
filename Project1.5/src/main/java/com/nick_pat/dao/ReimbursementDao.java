@@ -20,6 +20,9 @@ import com.nick_pat.model.Reimbursement;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
+
+import javax.persistence.NamedQuery;
 
 /*
  * Purpose of this Dao is to send/retrieve info about a reimbursement
@@ -39,7 +42,11 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 
 		SessionFactory factory = new Configuration().configure().buildSessionFactory();
 
-		Session session = factory.openSession().getSession();
+		Session session = factory.openSession();
+
+		Query<Reimbursement> query = session.createNamedQuery("getAllReimbursements", Reimbursement.class);
+
+		
 
 
 		try (Connection c = ConnectionUtil.getInstance().getConnection()) {

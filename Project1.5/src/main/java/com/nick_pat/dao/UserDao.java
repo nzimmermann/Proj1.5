@@ -11,7 +11,14 @@ import java.util.List;
 import com.nick_pat.model.User;
 import org.apache.log4j.Logger;
 
+import org.hibernate.SessionFactory;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+
 import com.project1.util.ConnectionUtil;
+
+import javax.persistence.Query;
 
 /*
  * Purpose of this Dao is to send/retrieve info about a reimbursement
@@ -30,6 +37,13 @@ public class UserDao implements GenericDao <User> {
 		List<User> l = new ArrayList<User>();
 		
 		try (Connection c = ConnectionUtil.getInstance().getConnection()) {
+			SessionFactory factory = new Configuration().configure().buildSessionFactory();
+
+			Session session = factory.openSession();
+
+			Query selectAll = session.createQuery("from User");
+			List<>
+
 			String qSql = "SELECT * FROM ers_users";
 			Statement s = c.createStatement();
 			ResultSet rs = s.executeQuery(qSql);
