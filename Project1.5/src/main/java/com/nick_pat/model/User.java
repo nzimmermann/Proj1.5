@@ -1,23 +1,13 @@
 package com.nick_pat.model;
 import javax.persistence.*;
 
-@Entity
-@Table
 public class User {
-	@Id
-	@GeneratedValue
 	private int user_id;
-	@Column
 	private String username;
-	@Column
 	private String password;
-	@Column
 	private String firstname;
-	@Column
 	private String lastname;
-	@Column
 	private String email;
-	@Column
 	private int role_id;
 	
 	public User() {

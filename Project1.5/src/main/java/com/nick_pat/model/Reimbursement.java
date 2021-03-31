@@ -1,16 +1,31 @@
 package com.nick_pat.model;
 
 import java.sql.Timestamp;
+import javax.persistence.*;
 
+
+@NamedQueries({})
+@Entity
+@Table
 public class Reimbursement {
+	@Id
+	@GeneratedValue
 	private int id;
+	@Column
 	private float amount;
+	@Column
 	private Timestamp submitted;
+	@Column
 	private Timestamp resolved;
+	@Column
 	private String description;
+	@Column
 	private int author;
+	@Column
 	private int resolver;
+	@Column
 	private int status_id;
+	@Column
 	private int type_id;
 	
 	public Reimbursement() {
