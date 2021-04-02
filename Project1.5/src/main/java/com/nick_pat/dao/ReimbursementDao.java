@@ -50,6 +50,8 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 
 		List<Reimbursement> result = query.getResultList();
 
+		session.close();
+
 		return result;
 
 
@@ -81,6 +83,8 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 
 		Reimbursement r = query.getSingleResult();
 
+		session.close();
+
 		return r;
 		
 //		try(Connection c = ConnectionUtil.getInstance().getConnection()) {
@@ -110,6 +114,8 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 		Query<Reimbursement> query = session.createNamedQuery("getAllReimbursementsByUserId", Reimbursement.class);
 
 		List<Reimbursement> result = query.getResultList();
+
+		session.close();
 
 		return result;
 		
@@ -177,51 +183,62 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 	}
 	
 	public void updateList(int[][] i, int resolver) {
-		try(Connection c = ConnectionUtil.getInstance().getConnection()) {
-			String aSql = "SELECT acceptarray(?, ?)";
-			String dSql = "SELECT denyarray(?, ?)";
-			
-			//Convert both of our int arrays to an Integer object
-			Integer[] a = Arrays.stream(i[0]).boxed().toArray(Integer[]::new);
-			Integer[] d = Arrays.stream(i[1]).boxed().toArray(Integer[]::new);
-			
-			//Convert both of our Integer arrays into something useful for SQL.
-			Array aArray = c.createArrayOf("INTEGER", a);
-			Array dArray = c.createArrayOf("INTEGER", d);
-			
-			//Perform our SQL calls
-			CallableStatement cs = c.prepareCall(aSql);
-			cs.setArray(1, aArray);
-			cs.setInt(2, resolver);
-			cs.execute();
-			cs.closeOnCompletion();
-			
-			cs = c.prepareCall(dSql);
-			cs.setArray(1, dArray);
-			cs.setInt(2, resolver);
-			cs.execute();
-			cs.closeOnCompletion();
-			
-			//This section is just for the sake of logging.
-			int totalCount = 0;
-			for(int co = 0; co < a.length; co++) {
-				if (a[co] != -1) {
-					totalCount++;
-				}
-				if (d[co] != -1) {
-					totalCount++;
-				}
-			}
-			LOGGER.debug(totalCount + " reimbursement" + ((totalCount != 1) ? "s" : "") + " modified by user ID " + resolver + ".");
-		} catch (SQLException e) {
-			LOGGER.error("An attempt to accept/deny reimbursements by user ID " + resolver + " from the database failed.");
-			e.printStackTrace();
-		}
+
+
+//		try(Connection c = ConnectionUtil.getInstance().getConnection()) {
+//			String aSql = "SELECT acceptarray(?, ?)";
+//			String dSql = "SELECT denyarray(?, ?)";
+//
+//			//Convert both of our int arrays to an Integer object
+//			Integer[] a = Arrays.stream(i[0]).boxed().toArray(Integer[]::new);
+//			Integer[] d = Arrays.stream(i[1]).boxed().toArray(Integer[]::new);
+//
+//			//Convert both of our Integer arrays into something useful for SQL.
+//			Array aArray = c.createArrayOf("INTEGER", a);
+//			Array dArray = c.createArrayOf("INTEGER", d);
+//
+//			//Perform our SQL calls
+//			CallableStatement cs = c.prepareCall(aSql);
+//			cs.setArray(1, aArray);
+//			cs.setInt(2, resolver);
+//			cs.execute();
+//			cs.closeOnCompletion();
+//
+//			cs = c.prepareCall(dSql);
+//			cs.setArray(1, dArray);
+//			cs.setInt(2, resolver);
+//			cs.execute();
+//			cs.closeOnCompletion();
+//
+//			//This section is just for the sake of logging.
+//			int totalCount = 0;
+//			for(int co = 0; co < a.length; co++) {
+//				if (a[co] != -1) {
+//					totalCount++;
+//				}
+//				if (d[co] != -1) {
+//					totalCount++;
+//				}
+//			}
+//			LOGGER.debug(totalCount + " reimbursement" + ((totalCount != 1) ? "s" : "") + " modified by user ID " + resolver + ".");
+//		} catch (SQLException e) {
+//			LOGGER.error("An attempt to accept/deny reimbursements by user ID " + resolver + " from the database failed.");
+//			e.printStackTrace();
+//		}
 	}
 	
 	@Override
 	public void delete(Reimbursement r) {
-		
+		Session session = factory.openSession();
+
+		session.beginTransaction();
+
+		session.remove(r);
+
+		session.getTransaction().commit();
+
+		session.close();
 	}
+
 	
 }
