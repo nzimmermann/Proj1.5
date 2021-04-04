@@ -1,1 +1,1 @@
-hibernate.cfg.xml
+\Project1.5\src\main\resources\hibernate.cfg.xml
