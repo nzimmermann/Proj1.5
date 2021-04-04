@@ -8,7 +8,7 @@ import javax.persistence.*;
 				@NamedQuery(name="getReimbursementById", query = "from Reimbursement where id = :id"),
 				@NamedQuery(name="getAllReimbursementsByUserId", query = "from Reimbursement where author = :author")
 				})
-@Entity
+@Entity(name = "Reimbursement")
 @Table(name = "ers_reimbursement")
 public class Reimbursement {
 	@Id
@@ -30,6 +30,7 @@ public class Reimbursement {
 	private int status_id;
 	@Column
 	private int type_id;
+
 	@ManyToOne
 	@JoinColumn(name="user_id")
 	private User user;
@@ -38,9 +39,8 @@ public class Reimbursement {
 		//No-arg constructor
 	}
 	
-	public Reimbursement(int id, float amount, Timestamp submitted, Timestamp resolved, String description, int author,
+	public Reimbursement(float amount, Timestamp submitted, Timestamp resolved, String description, int author,
 			int resolver, int status_id, int type_id) {
-		this.id = id;
 		this.amount = amount;
 		this.submitted = submitted;
 		this.resolved = resolved;
@@ -122,6 +122,10 @@ public class Reimbursement {
 	public void setType_id(int type_id) {
 		this.type_id = type_id;
 	}
+
+	public User getUser() { return user; }
+
+	public void setUser(User user) { this.user = user; }
 
 	@Override
 	public int hashCode() {

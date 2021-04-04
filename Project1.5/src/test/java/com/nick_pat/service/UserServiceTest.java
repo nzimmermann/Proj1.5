@@ -1,4 +1,4 @@
 package com.nick_pat.service;
 
-public class UserService {
+public class UserServiceTest {
 }

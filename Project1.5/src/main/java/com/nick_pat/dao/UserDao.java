@@ -26,17 +26,20 @@ public class UserDao implements GenericDao <User> {
 	private static final Logger LOGGER = Logger.getLogger(UserDao.class);
 	private static SessionFactory factory;
 
-	private User objectConstructor(ResultSet rs) throws SQLException {
-		return new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),
-						rs.getString(6), rs.getInt(7));
-	}
+//	private User objectConstructor(ResultSet rs) throws SQLException {
+//		return new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),
+//						rs.getString(6), rs.getInt(7));
+//	}
+
+	public UserDao(){ factory = SingleSessionFactory.INSTANCE.getFactory();}
 	
 	@Override
 	public List<User> getList() {
 		Session session = factory.openSession();
+		session.getTransaction().begin();
 		Query<User> query = session.createNamedQuery("getAllUsers", User.class);
 		List<User> result = query.getResultList();
-
+		session.close();
 		return result;
 	}
 
@@ -64,9 +67,12 @@ public class UserDao implements GenericDao <User> {
 
 	@Override
 	public User getById(int id) {
-		try(Session session = factory.openSession()){
-			return session.get(User.class, id);
-		}
+		User u = null;
+		Session session = factory.openSession();
+		session.getTransaction().begin();
+		u = session.get(User.class, id);
+		session.close();
+		return u;
 	}
 
 //	@Override
@@ -101,11 +107,13 @@ public class UserDao implements GenericDao <User> {
 	@Override
 	public User getByUsername(String username) {
 		Session session = factory.openSession();
-		String hql = "from ers_users u where u.ers_username = :searchName";
-		@SuppressWarnings("rawtypes")
-		Query userQuery = session.createQuery(hql).setParameter("searchName", username.toLowerCase());
-
-		return (User) userQuery;
+		User u = null;
+		session.getTransaction().begin();
+		Query<User> query = session.createNamedQuery("getByUsername", User.class);
+		query.setParameter(username, "username");
+		u = query.getSingleResult();
+		session.close();
+		return u;
 	}
 
 //		try(Connection c = ConnectionUtil.getInstance().getConnection()) {
@@ -130,12 +138,20 @@ public class UserDao implements GenericDao <User> {
 	@Override
 	public void insert(User t) {
 		// TODO Auto-generated method stub
-		
+		Session session = factory.openSession();
+		session.getTransaction().begin();
+		session.persist(t);
+		session.getTransaction().commit();
+		session.close();
 	}
 
 	@Override
 	public void delete(User t) {
 		// TODO Auto-generated method stub
-		
+		Session session = factory.openSession();
+		session.getTransaction().begin();
+		session.remove(t);
+		session.getTransaction().commit();
+		session.close();
 	}
 }

@@ -1,13 +1,16 @@
 package com.nick_pat.model;
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@NamedQueries({@NamedQuery(name="getByUsername", query="from User where id = :id"),
+				@NamedQuery(name="getAllUsers", query = "from User")})
+@Entity(name="User")
 @Table(name = "ers_users")
 public class User {
 	@Id
 	@GeneratedValue
-	private int user_id;
+	private int id;
 	@Column
 	private String username;
 	@Column
@@ -20,17 +23,20 @@ public class User {
 	private String email;
 	@Column
 	private int role_id;
-	@OneToMany(mappedBy = "ers_users")
+
+	@OneToMany(mappedBy = "user",
+	orphanRemoval = true,
+	fetch = FetchType.EAGER)
 	private List<Reimbursement> reimbursements;
 
 	
 	public User() {
 		//No-arg constructor
+		reimbursements = new ArrayList<>();
 	}
 	
-	public User(int user_id, String username, String password, String firstname, String lastname, String email,
+	public User(String username, String password, String firstname, String lastname, String email,
 			int role_id) {
-		this.user_id = user_id;
 		this.username = username;
 		this.password = password;
 		this.firstname = firstname;
@@ -39,12 +45,12 @@ public class User {
 		this.role_id = role_id;
 	}
 
-	public int getUser_id() {
-		return user_id;
+	public int getId() {
+		return id;
 	}
 
-	public void setUser_id(int user_id) {
-		this.user_id = user_id;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getUsername() {
@@ -95,6 +101,10 @@ public class User {
 		this.role_id = role_id;
 	}
 
+	public List<Reimbursement> getReimbursements() { return reimbursements; }
+
+	public void setReimbursements(List<Reimbursement> reimbursements) { this.reimbursements = reimbursements; }
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -104,7 +114,7 @@ public class User {
 		result = prime * result + ((lastname == null) ? 0 : lastname.hashCode());
 		result = prime * result + ((password == null) ? 0 : password.hashCode());
 		result = prime * result + role_id;
-		result = prime * result + user_id;
+		result = prime * result + id;
 		result = prime * result + ((username == null) ? 0 : username.hashCode());
 		return result;
 	}
@@ -140,7 +150,7 @@ public class User {
 			return false;
 		if (role_id != other.role_id)
 			return false;
-		if (user_id != other.user_id)
+		if (id != other.id)
 			return false;
 		if (username == null) {
 			if (other.username != null)
@@ -152,7 +162,7 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [user_id=" + user_id + ", username=" + username + ", password=" + password + ", firstname="
+		return "User [id=" + id + ", username=" + username + ", password=" + password + ", firstname="
 				+ firstname + ", lastname=" + lastname + ", email=" + email + ", role_id=" + role_id + "]";
 	}
 }

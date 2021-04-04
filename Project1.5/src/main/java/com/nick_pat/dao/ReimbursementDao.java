@@ -33,14 +33,12 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 	private static final Logger LOGGER = Logger.getLogger(ReimbursementDao.class);
 	private SessionFactory factory;
 	
-	private Reimbursement objectConstructor(ResultSet rs) throws SQLException {
-		return new Reimbursement(rs.getInt(1), rs.getFloat(2), rs.getTimestamp(3), rs.getTimestamp(4),
-							rs.getString(5), rs.getInt(7), rs.getInt(8), rs.getInt(9), rs.getInt(10));
-	}
+//	private Reimbursement objectConstructor(ResultSet rs) throws SQLException {
+//		return new Reimbursement(rs.getInt(1), rs.getFloat(2), rs.getTimestamp(3), rs.getTimestamp(4),
+//							rs.getString(5), rs.getInt(7), rs.getInt(8), rs.getInt(9), rs.getInt(10));
+//	}
 
-	public ReimbursementDao(){
-		factory = new Configuration().configure().buildSessionFactory();
-	}
+	public ReimbursementDao(){ factory = SingleSessionFactory.INSTANCE.getFactory(); }
 
 	@Override
 	public List<Reimbursement> getList() {
@@ -81,11 +79,9 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 	public Reimbursement getById(int id) {
 
 		Session session = factory.openSession();
-
-		Query<Reimbursement> query = session.createNamedQuery("getReimbursementById", Reimbursement.class);
-
-		Reimbursement r = query.getSingleResult();
-
+		session.getTransaction().begin();
+		Reimbursement r = session.get(Reimbursement.class, id);
+		session.close();
 		return r;
 	}
 //		try(Connection c = ConnectionUtil.getInstance().getConnection()) {
@@ -111,9 +107,10 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 	public List<Reimbursement> getByUserId(int id) {
 
 		Session session = factory.openSession();
+		session.getTransaction().begin();
 		Query<Reimbursement> query = session.createNamedQuery("getAllReimbursementsByUserId", Reimbursement.class);
 		List<Reimbursement> result = query.getResultList();
-
+		session.close();
 		return result;
 
 	}
@@ -238,12 +235,11 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 	@Override
 	public void delete(Reimbursement r) {
 
-		try(Session session = factory.openSession()){
-			session.beginTransaction();
-			session.remove(r);
-			session.getTransaction().commit();
-			session.close();
-		}
+		Session session = factory.openSession();
+		session.beginTransaction();
+		session.remove(r);
+		session.getTransaction().commit();
+		session.close();
 
 	}
 
