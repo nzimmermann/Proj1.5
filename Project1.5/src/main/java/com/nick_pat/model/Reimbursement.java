@@ -30,6 +30,9 @@ public class Reimbursement {
 	private int status_id;
 	@Column
 	private int type_id;
+	@ManyToOne
+	@JoinColumn(name="user_id")
+	private User user;
 	
 	public Reimbursement() {
 		//No-arg constructor

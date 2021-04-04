@@ -1,5 +1,6 @@
 package com.nick_pat.model;
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "ers_users")
@@ -19,6 +20,9 @@ public class User {
 	private String email;
 	@Column
 	private int role_id;
+	@OneToMany(mappedBy = "ers_users")
+	private List<Reimbursement> reimbursements;
+
 	
 	public User() {
 		//No-arg constructor
