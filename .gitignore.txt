@@ -1,1 +1,3 @@
-\Project1.5\src\main\resources\hibernate.cfg.xml
+Project1.5/src/main/resources/hibernate.cfg.xml
+Project1.5/target/classes/hibernate.cfg.xml
+/Project1.5/src/main/java/com/nick_pat/TempDriver.java
