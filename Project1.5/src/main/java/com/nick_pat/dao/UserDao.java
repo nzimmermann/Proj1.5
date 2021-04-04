@@ -11,12 +11,12 @@ import java.util.List;
 import com.nick_pat.model.User;
 import org.apache.log4j.Logger;
 
+import org.hibernate.query.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
-import javax.persistence.Query;
 
 /*
  * Purpose of this Dao is to send/retrieve info about a reimbursement
@@ -24,6 +24,7 @@ import javax.persistence.Query;
  */
 public class UserDao implements GenericDao <User> {
 	private static final Logger LOGGER = Logger.getLogger(UserDao.class);
+	private static SessionFactory factory;
 
 	private User objectConstructor(ResultSet rs) throws SQLException {
 		return new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),
@@ -32,35 +33,46 @@ public class UserDao implements GenericDao <User> {
 	
 	@Override
 	public List<User> getList() {
-		List<User> l = new ArrayList<User>();
-
-		SessionFactory factory = new Configuration().configure().buildSessionFactory();
-
 		Session session = factory.openSession();
+		Query<User> query = session.createNamedQuery("getAllUsers", User.class);
+		List<User> result = query.getResultList();
 
-		Query selectAll = session.createQuery("from User");
-//
-//		try (Connection c = ConnectionUtil.getInstance().getConnection()) {
-//
-//			String qSql = "SELECT * FROM ers_users";
-//			Statement s = c.createStatement();
-//			ResultSet rs = s.executeQuery(qSql);
-//
-//			while(rs.next()) {
-//				l.add(objectConstructor(rs));
-//			}
-//			LOGGER.debug("A list of users was retrieved from the database.");
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			LOGGER.error("An attempt to get all users from the database failed.");
-//		}
-		return l;
+		return result;
 	}
+
+//	try (Connection c = ConnectionUtil.getInstance().getConnection()) {
+//		SessionFactory factory = new Configuration().configure().buildSessionFactory();
+//
+//		Session session = factory.openSession();
+//
+//		Query selectAll = session.createQuery("from User");
+//		//List<>
+//
+//		String qSql = "SELECT * FROM ers_users";
+//		Statement s = c.createStatement();
+//		ResultSet rs = s.executeQuery(qSql);
+//
+//		while(rs.next()) {
+//			l.add(objectConstructor(rs));
+//		}
+//		LOGGER.debug("A list of users was retrieved from the database.");
+//	} catch (SQLException e) {
+//		e.printStackTrace();
+//		LOGGER.error("An attempt to get all users from the database failed.");
+//	}
+
 
 	@Override
 	public User getById(int id) {
-		User u = null;
-		
+		try(Session session = factory.openSession()){
+			return session.get(User.class, id);
+		}
+	}
+
+//	@Override
+//	public User getById(int id) {
+//		User u = null;
+//
 //		try(Connection c = ConnectionUtil.getInstance().getConnection()) {
 //			String qSql = "SELECT * FROM ers_users WHERE ers_users_id = ?";
 //			PreparedStatement ps = c.prepareStatement(qSql);
@@ -75,9 +87,11 @@ public class UserDao implements GenericDao <User> {
 //			e.printStackTrace();
 //			LOGGER.error("An attempt to get info about user ID " + id + " from the database failed.");
 //		}
-		return u;
-	}
-	
+//		return u;
+//	}
+
+
+
 	@Override
 	public List<User> getByUserId(int id) {
 		// TODO Auto-generated method stub
@@ -86,8 +100,14 @@ public class UserDao implements GenericDao <User> {
 	
 	@Override
 	public User getByUsername(String username) {
-		User u = null;
-		
+		Session session = factory.openSession();
+		String hql = "from ers_users u where u.ers_username = :searchName";
+		@SuppressWarnings("rawtypes")
+		Query userQuery = session.createQuery(hql).setParameter("searchName", username.toLowerCase());
+
+		return (User) userQuery;
+	}
+
 //		try(Connection c = ConnectionUtil.getInstance().getConnection()) {
 //			String qSql = "SELECT * FROM ers_users WHERE ers_username = ?";
 //			PreparedStatement ps = c.prepareStatement(qSql);
@@ -104,8 +124,8 @@ public class UserDao implements GenericDao <User> {
 //			e.printStackTrace();
 //			LOGGER.error("An attempt to get info about username " + username + " from the database failed.");
 //		}
-		return u;
-	}
+//		return u;
+//	}
 
 	@Override
 	public void insert(User t) {

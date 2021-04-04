@@ -9,7 +9,7 @@ import javax.persistence.*;
 				@NamedQuery(name="getAllReimbursementsByUserId", query = "from Reimbursement where author = :author")
 				})
 @Entity
-@Table
+@Table(name = "ers_reimbursement")
 public class Reimbursement {
 	@Id
 	@GeneratedValue
