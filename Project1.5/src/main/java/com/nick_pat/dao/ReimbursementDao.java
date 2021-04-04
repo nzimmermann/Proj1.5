@@ -19,6 +19,7 @@ import com.nick_pat.model.Reimbursement;
 //import com.project1.util.ConnectionUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 
@@ -46,14 +47,16 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 
 		Session session = factory.openSession();
 
-		Query<Reimbursement> query = session.createNamedQuery("getAllReimbursements", Reimbursement.class);
+		Query<Reimbursement> query =
+				session.createNamedQuery("getAllReimbursements", Reimbursement.class);
 
-		List<Reimbursement> result = query.getResultList();
+		List<Reimbursement> result =
+				query.getResultList();
 
 		session.close();
 
 		return result;
-
+	}
 
 //		try (Connection c = ConnectionUtil.getInstance().getConnection()) {
 //			String qSql = "SELECT * FROM ers_reimbursement";
@@ -72,7 +75,7 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 //			LOGGER.error("An attempt to get all reimbursements failed.");
 //		}
 //		return l;
-	}
+
 
 	@Override
 	public Reimbursement getById(int id) {
@@ -83,10 +86,8 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 
 		Reimbursement r = query.getSingleResult();
 
-		session.close();
-
 		return r;
-		
+	}
 //		try(Connection c = ConnectionUtil.getInstance().getConnection()) {
 //			String qSql = "SELECT * FROM ers_reimbursement WHERE reimb_id = ?";
 //			PreparedStatement ps = c.prepareStatement(qSql);
@@ -104,21 +105,18 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 //			LOGGER.error("An attempt to get a reimbursement by ID" + id + " from the database failed.");
 //		}
 //		return r;
-	}
+//	}
 	
 	@Override
 	public List<Reimbursement> getByUserId(int id) {
 
 		Session session = factory.openSession();
-
 		Query<Reimbursement> query = session.createNamedQuery("getAllReimbursementsByUserId", Reimbursement.class);
-
 		List<Reimbursement> result = query.getResultList();
 
-		session.close();
-
 		return result;
-		
+
+	}
 //		try(Connection c = ConnectionUtil.getInstance().getConnection()) {
 //			String qSql = "SELECT * FROM ers_reimbursement WHERE reimb_author = ?";
 //			PreparedStatement ps = c.prepareStatement(qSql);
@@ -137,8 +135,9 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 //		}
 //		System.out.println(l.toString());
 //		return l;
-	}
-	
+//	}
+
+
 	public Reimbursement getByUsername(String username) {
 		//Empty. Reason - No use.
 		return null;
@@ -158,9 +157,7 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 		session.close();
 
 
-
-
-
+	}
 //		try(Connection c = ConnectionUtil.getInstance().getConnection()) {
 //			String sql = "INSERT INTO ers_reimbursement(reimb_amount, reimb_submitted, reimb_description, "
 //					   + "reimb_author, reimb_status_id, reimb_type_id) VALUES(?, ?, ?, ?, ?, ?)";
@@ -180,11 +177,22 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 //			e.printStackTrace();
 //			LOGGER.error("An attempt to insert a reimbursement to the database failed.");
 //		}
-	}
+
 	
 	public void updateList(int[][] i, int resolver) {
 
+		try (Session session = factory.openSession()) {
+			Transaction tx;
+			tx = session.beginTransaction();
 
+
+
+
+			tx.commit();
+		}
+
+
+	}
 //		try(Connection c = ConnectionUtil.getInstance().getConnection()) {
 //			String aSql = "SELECT acceptarray(?, ?)";
 //			String dSql = "SELECT denyarray(?, ?)";
@@ -225,20 +233,19 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 //			LOGGER.error("An attempt to accept/deny reimbursements by user ID " + resolver + " from the database failed.");
 //			e.printStackTrace();
 //		}
-	}
+//	}
 	
 	@Override
 	public void delete(Reimbursement r) {
-		Session session = factory.openSession();
 
-		session.beginTransaction();
+		try(Session session = factory.openSession()){
+			session.beginTransaction();
+			session.remove(r);
+			session.getTransaction().commit();
+			session.close();
+		}
 
-		session.remove(r);
-
-		session.getTransaction().commit();
-
-		session.close();
 	}
 
-	
+
 }
