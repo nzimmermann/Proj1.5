@@ -1,5 +1,8 @@
 package com.nick_pat.servlet;
 
+import com.nick_pat.controler.UserController;
+import com.nick_pat.service.UserService;
+
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -7,9 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 
-// TODO: Configure this servlet properly and rename it afterwards
-public class IDKyetServlet extends HttpServlet {
+public class UserServlet extends HttpServlet {
+
     @Override
     public void init() throws ServletException {
         super.init();
@@ -27,7 +31,7 @@ public class IDKyetServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doGet(req, resp);
+        new UserController(new UserService()).getUser(req,resp);
     }
 
 }

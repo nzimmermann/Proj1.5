@@ -3,7 +3,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@NamedQueries({@NamedQuery(name="getByUsername", query="from User where id = :id"),
+@NamedQueries({@NamedQuery(name="getByUsername", query="from User where username = :username"),
 				@NamedQuery(name="getAllUsers", query = "from User")})
 @Entity(name="User")
 @Table(name = "ers_users")
@@ -35,8 +35,9 @@ public class User {
 		reimbursements = new ArrayList<>();
 	}
 	
-	public User(String username, String password, String firstname, String lastname, String email,
+	public User(int user_id, String username, String password, String firstname, String lastname, String email,
 			int role_id) {
+		this.id = user_id;
 		this.username = username;
 		this.password = password;
 		this.firstname = firstname;

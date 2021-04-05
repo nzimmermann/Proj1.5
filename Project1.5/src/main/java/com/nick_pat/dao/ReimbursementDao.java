@@ -33,10 +33,10 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 	private static final Logger LOGGER = Logger.getLogger(ReimbursementDao.class);
 	private SessionFactory factory;
 	
-//	private Reimbursement objectConstructor(ResultSet rs) throws SQLException {
-//		return new Reimbursement(rs.getInt(1), rs.getFloat(2), rs.getTimestamp(3), rs.getTimestamp(4),
-//							rs.getString(5), rs.getInt(7), rs.getInt(8), rs.getInt(9), rs.getInt(10));
-//	}
+	private Reimbursement objectConstructor(ResultSet rs) throws SQLException {
+		return new Reimbursement(rs.getFloat(2), rs.getTimestamp(3), rs.getTimestamp(4),
+							rs.getString(5), rs.getInt(7), rs.getInt(8), rs.getInt(9), rs.getInt(10));
+	}
 
 	public ReimbursementDao(){ factory = SingleSessionFactory.INSTANCE.getFactory(); }
 
@@ -143,15 +143,14 @@ public class ReimbursementDao implements GenericDao<Reimbursement> {
 	@Override
 	public void insert(Reimbursement r) {
 
-		Session session = factory.openSession();
+		try(Session session = factory.openSession()){
+			session.beginTransaction();
 
-		session.beginTransaction();
+			session.persist(r);
 
-		session.persist(r);
-
-		session.getTransaction().commit();
-
-		session.close();
+			session.getTransaction().commit();
+			session.close();
+		}
 
 
 	}

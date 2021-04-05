@@ -26,10 +26,10 @@ public class UserDao implements GenericDao <User> {
 	private static final Logger LOGGER = Logger.getLogger(UserDao.class);
 	private static SessionFactory factory;
 
-//	private User objectConstructor(ResultSet rs) throws SQLException {
-//		return new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),
-//						rs.getString(6), rs.getInt(7));
-//	}
+	private User objectConstructor(ResultSet rs) throws SQLException {
+		return new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),
+						rs.getString(6), rs.getInt(7));
+	}
 
 	public UserDao(){ factory = SingleSessionFactory.INSTANCE.getFactory();}
 	
@@ -67,10 +67,9 @@ public class UserDao implements GenericDao <User> {
 
 	@Override
 	public User getById(int id) {
-		User u = null;
 		Session session = factory.openSession();
 		session.getTransaction().begin();
-		u = session.get(User.class, id);
+		User u = session.get(User.class, id);
 		session.close();
 		return u;
 	}
@@ -100,7 +99,7 @@ public class UserDao implements GenericDao <User> {
 
 	@Override
 	public List<User> getByUserId(int id) {
-		// TODO Auto-generated method stub
+		// does nothing
 		return null;
 	}
 	

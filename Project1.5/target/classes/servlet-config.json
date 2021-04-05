@@ -1,0 +1,4 @@
+{
+  "/": "com.nick_pat.servlet.ServletController",
+  "/user": "com.nick_pat.servlet.UserServlet"
+}
