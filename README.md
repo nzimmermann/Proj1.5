@@ -14,6 +14,7 @@ Implement functionality from a given template. Consisting of multiple HTTP reque
  * HTML
  * Hibernate
  * Tomcat
+ * HTTP
 
 ## Contributors
 * Nick Zimmerman
